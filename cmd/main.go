@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/rms-diego/image-processor/internal/config"
 	"github.com/rms-diego/image-processor/internal/database"
+	"github.com/rms-diego/image-processor/internal/middleware"
 	"github.com/rms-diego/image-processor/internal/routes"
 )
 
@@ -17,6 +18,7 @@ func main() {
 	}
 
 	app := gin.Default()
+	app.Use(middleware.ErrorHandler())
 
 	routes.Init(app.Group("/"))
 	app.Run(":" + config.Env.PORT)
