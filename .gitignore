@@ -33,3 +33,6 @@ go.work.sum
 
 build/*
 !build/.gitkeep
+
+tmp/*
+!tmp/.gitkeep
