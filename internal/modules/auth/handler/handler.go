@@ -5,6 +5,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	usersService "github.com/rms-diego/image-processor/internal/modules/auth/service"
+	"github.com/rms-diego/image-processor/internal/utils/exception"
 	"github.com/rms-diego/image-processor/internal/validations"
 )
 
@@ -23,12 +24,12 @@ func NewHandler(service usersService.AuthServiceInterface) AuthHandlerInterface 
 func (h *authHandler) Register(c *gin.Context) {
 	var payload validations.AuthRequest
 	if err := c.ShouldBindJSON(&payload); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.Error(exception.New(err.Error(), http.StatusBadRequest, nil))
 		return
 	}
 
 	if err := h.Service.Register(&payload); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.Error(err)
 		return
 	}
 
