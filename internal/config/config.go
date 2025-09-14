@@ -9,6 +9,7 @@ import (
 
 type env struct {
 	PORT        string
+	JWT_SECRET  string
 	DB_HOST     string
 	DB_PORT     string
 	DB_USER     string
@@ -21,6 +22,7 @@ var Env *env
 func newEnv() *env {
 	return &env{
 		PORT:        os.Getenv("PORT"),
+		JWT_SECRET:  os.Getenv("JWT_SECRET"),
 		DB_HOST:     os.Getenv("DB_HOST"),
 		DB_PORT:     os.Getenv("DB_PORT"),
 		DB_USER:     os.Getenv("DB_USER"),
@@ -52,6 +54,9 @@ func Init() error {
 
 	case os.Getenv("DB_NAME") == "":
 		return fmt.Errorf("DB_NAME variable is not set")
+
+	case os.Getenv("JWT_SECRET") == "":
+		return fmt.Errorf("JWT_SECRET variable is not set")
 
 	default:
 		Env = newEnv()

@@ -13,4 +13,5 @@ func RouteInit(r *gin.RouterGroup) {
 	h := authHandler.NewHandler(s)
 
 	r.POST("/register", h.Register)
+	r.POST("/", h.Login)
 }

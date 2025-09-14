@@ -2,7 +2,10 @@ package authService
 
 import (
 	"net/http"
+	"time"
 
+	"github.com/golang-jwt/jwt/v5"
+	"github.com/rms-diego/image-processor/internal/config"
 	authRepository "github.com/rms-diego/image-processor/internal/modules/auth/repository"
 	"github.com/rms-diego/image-processor/internal/utils/exception"
 	"github.com/rms-diego/image-processor/internal/validations"
@@ -11,6 +14,7 @@ import (
 
 type AuthServiceInterface interface {
 	Register(user *validations.AuthRequest) error
+	Login(user *validations.AuthRequest) (*string, error)
 }
 
 type authService struct {
@@ -47,4 +51,33 @@ func (s *authService) Register(payload *validations.AuthRequest) error {
 	}
 
 	return nil
+}
+
+func (s *authService) Login(payload *validations.AuthRequest) (*string, error) {
+	userFound, err := s.Repository.FindByUsername(payload.Username)
+	if err != nil {
+		return nil, exception.New(err.Error(), http.StatusInternalServerError, &err)
+	}
+
+	if userFound == nil {
+		return nil, exception.New("user not found", http.StatusNotFound, nil)
+	}
+
+	err = bcrypt.CompareHashAndPassword([]byte(userFound.Password), []byte(payload.Password))
+	if err != nil {
+		return nil, exception.New("Invalid credentials", http.StatusUnauthorized, nil)
+	}
+
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+		"id":       userFound.ID,
+		"username": userFound.Username,
+		"exp":      time.Now().Add(time.Hour * 24).Unix(),
+	})
+
+	tokenStr, err := token.SignedString([]byte(config.Env.JWT_SECRET))
+	if err != nil {
+		return nil, exception.New(err.Error(), http.StatusInternalServerError, &err)
+	}
+
+	return &tokenStr, nil
 }

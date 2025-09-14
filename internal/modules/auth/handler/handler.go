@@ -11,6 +11,7 @@ import (
 
 type AuthHandlerInterface interface {
 	Register(c *gin.Context)
+	Login(c *gin.Context)
 }
 
 type authHandler struct {
@@ -34,4 +35,20 @@ func (h *authHandler) Register(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusNoContent, nil)
+}
+
+func (h *authHandler) Login(c *gin.Context) {
+	var payload validations.AuthRequest
+	if err := c.ShouldBindJSON(&payload); err != nil {
+		c.Error(exception.New(err.Error(), http.StatusBadRequest, nil))
+		return
+	}
+
+	token, err := h.Service.Login(&payload)
+	if err != nil {
+		c.Error(err)
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"token": token})
 }
