@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/rms-diego/image-processor/internal/config"
 	"github.com/rms-diego/image-processor/internal/database"
+	"github.com/rms-diego/image-processor/internal/routes"
 )
 
 func main() {
@@ -15,9 +16,8 @@ func main() {
 		panic(err)
 	}
 
-	// r.GET("/", func(c *gin.Context) {
-	// 	c.String(200, "Hello, World!")
-	// })
-	r := gin.Default()
-	r.Run(":" + config.Env.PORT)
+	app := gin.Default()
+
+	routes.Init(app.Group("/"))
+	app.Run(":" + config.Env.PORT)
 }
