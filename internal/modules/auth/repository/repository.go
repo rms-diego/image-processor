@@ -7,7 +7,7 @@ import (
 )
 
 type AuthRepositoryInterface interface {
-	Register(user *validations.RegisterRequest) error
+	Register(user *validations.AuthRequest) error
 }
 
 type authRepository struct{}
@@ -16,7 +16,7 @@ func NewRepository() AuthRepositoryInterface {
 	return &authRepository{}
 }
 
-func (r *authRepository) Register(user *validations.RegisterRequest) error {
+func (r *authRepository) Register(user *validations.AuthRequest) error {
 	query := goqu.Record{"username": user.Username, "password": user.Password}
 
 	_, err := database.Db.From("users").

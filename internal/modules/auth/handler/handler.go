@@ -21,7 +21,7 @@ func NewHandler(service usersService.AuthServiceInterface) AuthHandlerInterface 
 }
 
 func (h *authHandler) Register(c *gin.Context) {
-	var payload validations.RegisterRequest
+	var payload validations.AuthRequest
 	if err := c.ShouldBindJSON(&payload); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return

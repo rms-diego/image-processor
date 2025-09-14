@@ -7,7 +7,7 @@ import (
 )
 
 type AuthServiceInterface interface {
-	Register(user *validations.RegisterRequest) error
+	Register(user *validations.AuthRequest) error
 }
 
 type authService struct {
@@ -18,7 +18,7 @@ func NewService(repository authRepository.AuthRepositoryInterface) AuthServiceIn
 	return &authService{Repository: repository}
 }
 
-func (s *authService) Register(user *validations.RegisterRequest) error {
+func (s *authService) Register(user *validations.AuthRequest) error {
 	passwordBytes := []byte(user.Password)
 
 	hashedPassword, err := bcrypt.GenerateFromPassword(passwordBytes, bcrypt.DefaultCost)
@@ -26,7 +26,7 @@ func (s *authService) Register(user *validations.RegisterRequest) error {
 		return err
 	}
 
-	err = s.Repository.Register(&validations.RegisterRequest{
+	err = s.Repository.Register(&validations.AuthRequest{
 		Username: user.Username,
 		Password: string(hashedPassword),
 	})
