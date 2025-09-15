@@ -5,4 +5,13 @@ CREATE TABLE
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4 (),
     password VARCHAR(255) NOT NULL,
     username VARCHAR(255) NOT NULL UNIQUE
-  )
+  );
+
+CREATE TABLE
+  IF NOT EXISTS images (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4 (),
+    user_id UUID NOT NULL,
+    url TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
+  );
