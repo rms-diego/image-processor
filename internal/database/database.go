@@ -2,7 +2,6 @@ package database
 
 import (
 	"database/sql"
-	"fmt"
 
 	"github.com/doug-martin/goqu/v9"
 	_ "github.com/doug-martin/goqu/v9/dialect/postgres"
@@ -13,17 +12,8 @@ import (
 var Db *goqu.Database
 
 func Init() error {
-	dsn := fmt.Sprintf(
-		"host=%s port=%s user=%s password=%s dbname=%v sslmode=disable",
-		config.Env.DB_HOST,
-		config.Env.DB_PORT,
-		config.Env.DB_USER,
-		config.Env.DB_PASSWORD,
-		config.Env.DB_NAME,
-	)
-
 	dialect := goqu.Dialect("postgres")
-	pgDb, err := sql.Open("postgres", dsn)
+	pgDb, err := sql.Open("postgres", config.Env.DATABASE_URL)
 	if err != nil {
 		return err
 	}
