@@ -25,7 +25,7 @@ func NewHandler(service usersService.AuthServiceInterface) AuthHandlerInterface 
 func (h *authHandler) Register(c *gin.Context) {
 	var payload validations.AuthRequest
 	if err := c.ShouldBindJSON(&payload); err != nil {
-		c.Error(exception.New(err.Error(), http.StatusBadRequest, nil))
+		c.Error(exception.New(err.Error(), http.StatusBadRequest))
 		return
 	}
 
@@ -40,7 +40,7 @@ func (h *authHandler) Register(c *gin.Context) {
 func (h *authHandler) Login(c *gin.Context) {
 	var payload validations.AuthRequest
 	if err := c.ShouldBindJSON(&payload); err != nil {
-		c.Error(exception.New(err.Error(), http.StatusBadRequest, nil))
+		c.Error(exception.New(err.Error(), http.StatusBadRequest))
 		return
 	}
 
