@@ -5,6 +5,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/rms-diego/image-processor/internal/modules/auth"
+	"github.com/rms-diego/image-processor/internal/modules/image"
 )
 
 func Init(r *gin.RouterGroup) {
@@ -13,4 +14,5 @@ func Init(r *gin.RouterGroup) {
 	})
 
 	auth.RouteInit(r.Group("/auth"))
+	image.RouteInit(r.Group("/image"))
 }
