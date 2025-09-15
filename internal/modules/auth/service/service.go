@@ -2,12 +2,10 @@ package authService
 
 import (
 	"net/http"
-	"time"
 
-	"github.com/golang-jwt/jwt/v5"
-	"github.com/rms-diego/image-processor/internal/config"
 	authRepository "github.com/rms-diego/image-processor/internal/modules/auth/repository"
 	"github.com/rms-diego/image-processor/internal/utils/exception"
+	jwtutils "github.com/rms-diego/image-processor/internal/utils/jwt"
 	"github.com/rms-diego/image-processor/internal/validations"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -68,16 +66,10 @@ func (s *authService) Login(payload *validations.AuthRequest) (*string, error) {
 		return nil, exception.New("Invalid credentials", http.StatusUnauthorized)
 	}
 
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"id":       userFound.ID,
-		"username": userFound.Username,
-		"exp":      time.Now().Add(time.Hour * 24).Unix(),
-	})
-
-	tokenStr, err := token.SignedString([]byte(config.Env.JWT_SECRET))
+	token, err := jwtutils.NewJwtUtils().GenerateToken(*userFound)
 	if err != nil {
-		return nil, exception.New(err.Error(), http.StatusInternalServerError)
+		return nil, err
 	}
 
-	return &tokenStr, nil
+	return token, nil
 }
