@@ -1,8 +1,14 @@
-run: 
+run-api: 
 	go run cmd/main.go
 
-build:
-	go build -o ./build/main ./cmd/main.go
-
-run-dev:
+run-api-dev:
 	air
+
+build-api:
+	go build -o ./build/main ./cmd/api/main.go
+
+run-sqs-consumer:
+	go run cmd/sqs_consumer/sqs_consumer.go
+
+build-sqs-consumer:
+	go build -o ./build/sqs_consumer ./cmd/sqs_consumer/sqs_consumer.go
