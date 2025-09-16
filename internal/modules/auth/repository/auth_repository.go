@@ -8,6 +8,7 @@ import (
 type AuthRepositoryInterface interface {
 	Register(user *validations.AuthRequest) error
 	FindByUsername(username string) (*validations.UserFound, error)
+	GetUserByID(id string) (*validations.UserFound, error)
 }
 
 type authRepository struct {
@@ -43,6 +44,25 @@ func (r *authRepository) FindByUsername(username string) (*validations.UserFound
 		Select("*").
 		Where(goqu.Ex{"username": username}).
 		Limit(1).
+		ScanStruct(&user)
+
+	if err != nil {
+		return nil, err
+	}
+
+	if !found {
+		return nil, nil
+	}
+
+	return &user, nil
+}
+
+func (r *authRepository) GetUserByID(id string) (*validations.UserFound, error) {
+	var user validations.UserFound
+
+	found, err := r.database.From("users").
+		Select("*").
+		Where(goqu.Ex{"id": id}).
 		ScanStruct(&user)
 
 	if err != nil {

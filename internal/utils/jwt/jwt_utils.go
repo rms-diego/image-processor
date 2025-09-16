@@ -49,8 +49,12 @@ func (j *jwtUtils) ValidateAndDecodeToken(tokenStr string) (*JwtDecoded, error) 
 		return []byte(config.Env.JWT_SECRET), nil
 	})
 
-	if err != nil || !token.Valid {
+	if err != nil {
 		return nil, err
+	}
+
+	if !token.Valid {
+		return nil, jwt.ErrTokenExpired
 	}
 
 	t := JwtDecoded{

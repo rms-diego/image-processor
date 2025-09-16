@@ -20,7 +20,7 @@ func ErrorHandler() gin.HandlerFunc {
 
 			c.AbortWithStatusJSON(
 				ex.Code,
-				gin.H{"message": ex.Message, "code": ex.Code},
+				gin.H{"message": ex.Error(), "code": ex.Code},
 			)
 
 			return
