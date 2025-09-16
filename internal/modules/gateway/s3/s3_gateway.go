@@ -19,14 +19,14 @@ import (
 type S3GatewayService struct{}
 
 type S3GatewayServiceInterface interface {
-	Upload(fileHeaders *multipart.FileHeader, file *multipart.File) (*string, error)
+	Upload(fileHeaders *multipart.FileHeader, file *multipart.File) (*string, *string, error)
 }
 
 func NewService() S3GatewayServiceInterface {
 	return &S3GatewayService{}
 }
 
-func (s *S3GatewayService) Upload(fileHeaders *multipart.FileHeader, file *multipart.File) (*string, error) {
+func (s *S3GatewayService) Upload(fileHeaders *multipart.FileHeader, file *multipart.File) (*string, *string, error) {
 	awsCredentials := aws.NewCredentialsCache(
 		credentials.NewStaticCredentialsProvider(
 			configApp.Env.AWS_ACCESS_KEY_ID,
@@ -42,7 +42,7 @@ func (s *S3GatewayService) Upload(fileHeaders *multipart.FileHeader, file *multi
 	)
 
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	client := s3.NewFromConfig(cfg)
@@ -56,8 +56,8 @@ func (s *S3GatewayService) Upload(fileHeaders *multipart.FileHeader, file *multi
 	})
 
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
-	return &s3Res.Location, nil
+	return &s3Res.Location, &s3Key, nil
 }

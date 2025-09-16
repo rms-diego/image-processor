@@ -6,7 +6,7 @@ import (
 )
 
 type ImageRepositoryInterface interface {
-	UploadImage(userId, fileUrl string) error
+	UploadImage(userId, fileUrl, s3Key *string) error
 }
 
 type imageRepository struct{}
@@ -15,10 +15,11 @@ func NewImageRepository() ImageRepositoryInterface {
 	return &imageRepository{}
 }
 
-func (r *imageRepository) UploadImage(userId, fileUrl string) error {
+func (r *imageRepository) UploadImage(userId, fileUrl, s3Key *string) error {
 	query := goqu.Record{
-		"url":     fileUrl,
-		"user_id": userId,
+		"url":     &fileUrl,
+		"user_id": &userId,
+		"s3_key":  &s3Key,
 	}
 
 	_, err := database.Db.From("images").

@@ -30,12 +30,12 @@ func (s *imageService) UploadImage(userID string, fh *multipart.FileHeader) erro
 	}
 	defer f.Close()
 
-	location, err := s.s3Gateway.Upload(fh, &f)
+	location, s3Key, err := s.s3Gateway.Upload(fh, &f)
 	if err != nil {
 		return err
 	}
 
-	if err := s.repository.UploadImage(userID, *location); err != nil {
+	if err := s.repository.UploadImage(&userID, location, s3Key); err != nil {
 		return err
 	}
 
