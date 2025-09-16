@@ -34,9 +34,7 @@ func newEnv() *env {
 }
 
 func Init() error {
-	if err := godotenv.Load(); err != nil {
-		return fmt.Errorf("error on load environment variables: %v", err)
-	}
+	godotenv.Load()
 
 	switch {
 	case os.Getenv("PORT") == "":
