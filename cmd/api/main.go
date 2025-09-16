@@ -6,7 +6,7 @@ import (
 	"github.com/rms-diego/image-processor/internal/middleware"
 	"github.com/rms-diego/image-processor/internal/routes"
 	"github.com/rms-diego/image-processor/pkg/config"
-	sqsGateway "github.com/rms-diego/image-processor/pkg/gateway/sqs"
+	"github.com/rms-diego/image-processor/pkg/gateway"
 )
 
 func main() {
@@ -22,7 +22,7 @@ func main() {
 		panic(err)
 	}
 
-	if err := sqsGateway.Init(); err != nil {
+	if err := gateway.InitSQS(); err != nil {
 		panic(err)
 	}
 
