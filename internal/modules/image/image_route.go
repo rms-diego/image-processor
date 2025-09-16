@@ -2,6 +2,7 @@ package image
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/rms-diego/image-processor/internal/database"
 	"github.com/rms-diego/image-processor/internal/middleware"
 	s3Gateway "github.com/rms-diego/image-processor/internal/modules/gateway/s3"
 	imageHandler "github.com/rms-diego/image-processor/internal/modules/image/handler"
@@ -14,7 +15,7 @@ func RouteInit(g *gin.RouterGroup) {
 
 	s3Gateway := s3Gateway.NewService()
 
-	r := imageRepository.NewImageRepository()
+	r := imageRepository.NewImageRepository(database.Db)
 	s := imageService.NewService(s3Gateway, r)
 	h := imageHandler.NewHandler(s)
 

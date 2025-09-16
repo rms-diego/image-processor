@@ -48,7 +48,7 @@ func (s *S3GatewayService) Upload(fileHeaders *multipart.FileHeader, file *multi
 	client := s3.NewFromConfig(cfg)
 	uploader := manager.NewUploader(client)
 
-	s3Key := fmt.Sprintf("%v-%v", uuid.New().String(), fileHeaders.Filename)
+	s3Key := fmt.Sprintf("%v.%v", uuid.New().String(), fileHeaders.Filename)
 	s3Res, err := uploader.Upload(context.TODO(), &s3.PutObjectInput{
 		Bucket: aws.String(configApp.Env.AWS_S3_BUCKET_NAME),
 		Key:    aws.String(s3Key),

@@ -2,27 +2,30 @@ package imageRepository
 
 import (
 	"github.com/doug-martin/goqu/v9"
-	"github.com/rms-diego/image-processor/internal/database"
 )
 
 type ImageRepositoryInterface interface {
 	UploadImage(userId, fileUrl, s3Key *string) error
 }
 
-type imageRepository struct{}
+type imageRepository struct {
+	database *goqu.Database
+}
 
-func NewImageRepository() ImageRepositoryInterface {
-	return &imageRepository{}
+func NewImageRepository(database *goqu.Database) ImageRepositoryInterface {
+	return &imageRepository{
+		database: database,
+	}
 }
 
 func (r *imageRepository) UploadImage(userId, fileUrl, s3Key *string) error {
 	query := goqu.Record{
-		"url":     &fileUrl,
-		"user_id": &userId,
-		"s3_key":  &s3Key,
+		"url":     *fileUrl,
+		"user_id": *userId,
+		"s3_key":  *s3Key,
 	}
 
-	_, err := database.Db.From("images").
+	_, err := r.database.From("images").
 		Insert().
 		Rows(query).
 		Executor().
