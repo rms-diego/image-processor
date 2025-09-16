@@ -2,10 +2,10 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/rms-diego/image-processor/internal/config"
 	"github.com/rms-diego/image-processor/internal/database"
 	"github.com/rms-diego/image-processor/internal/middleware"
 	"github.com/rms-diego/image-processor/internal/routes"
+	"github.com/rms-diego/image-processor/pkg/config"
 )
 
 func main() {

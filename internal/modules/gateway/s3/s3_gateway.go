@@ -6,7 +6,7 @@ import (
 	"io"
 	"mime/multipart"
 
-	configApp "github.com/rms-diego/image-processor/internal/config"
+	configApp "github.com/rms-diego/image-processor/pkg/config"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"

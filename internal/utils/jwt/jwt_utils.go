@@ -4,8 +4,8 @@ import (
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
-	"github.com/rms-diego/image-processor/internal/config"
 	"github.com/rms-diego/image-processor/internal/validations"
+	"github.com/rms-diego/image-processor/pkg/config"
 )
 
 type JwtUtilsInterface interface {

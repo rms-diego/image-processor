@@ -6,7 +6,7 @@ import (
 	"github.com/doug-martin/goqu/v9"
 	_ "github.com/doug-martin/goqu/v9/dialect/postgres"
 	_ "github.com/lib/pq"
-	"github.com/rms-diego/image-processor/internal/config"
+	"github.com/rms-diego/image-processor/pkg/config"
 )
 
 var Db *goqu.Database

@@ -4,13 +4,13 @@ WORKDIR /app
 
 COPY go.mod go.sum ./
 
-RUN go mod tidy
+RUN go mod download
 
 COPY . .
 
 RUN go build -o build/main ./cmd/main.go
 
-FROM alpine:latest
+FROM alpine:3.21
 
 WORKDIR /app
 
@@ -20,6 +20,6 @@ COPY --from=build /app/build/main .
 
 EXPOSE 8080
 
-ENV GIN_MODE=release
+#ENV GIN_MODE=release
 
 CMD ["./main"]

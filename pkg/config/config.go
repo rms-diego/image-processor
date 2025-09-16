@@ -15,6 +15,7 @@ type env struct {
 	AWS_SECRET_ACCESS_KEY string
 	AWS_REGION            string
 	AWS_S3_BUCKET_NAME    string
+	AWS_SQS_URL           string
 }
 
 var Env *env
@@ -28,6 +29,7 @@ func newEnv() *env {
 		AWS_SECRET_ACCESS_KEY: os.Getenv("AWS_SECRET_ACCESS_KEY"),
 		AWS_REGION:            os.Getenv("AWS_REGION"),
 		AWS_S3_BUCKET_NAME:    os.Getenv("AWS_S3_BUCKET_NAME"),
+		AWS_SQS_URL:           os.Getenv("AWS_SQS_URL"),
 	}
 }
 
@@ -57,6 +59,9 @@ func Init() error {
 
 	case os.Getenv("AWS_S3_BUCKET_NAME") == "":
 		return fmt.Errorf("AWS_S3_BUCKET_NAME variable is not set")
+
+	case os.Getenv("AWS_SQS_URL") == "":
+		return fmt.Errorf("AWS_SQS_URL variable is not set")
 
 	default:
 		Env = newEnv()
