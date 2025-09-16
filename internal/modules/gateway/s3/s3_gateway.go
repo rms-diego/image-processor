@@ -29,15 +29,15 @@ func NewService() S3GatewayServiceInterface {
 func (s *S3GatewayService) Upload(fileHeaders *multipart.FileHeader, file *multipart.File) (*string, *string, error) {
 	awsCredentials := aws.NewCredentialsCache(
 		credentials.NewStaticCredentialsProvider(
-			configApp.Env.AWS_ACCESS_KEY_ID,
-			configApp.Env.AWS_SECRET_ACCESS_KEY,
+			configApp.AwsEnv.AWS_ACCESS_KEY_ID,
+			configApp.AwsEnv.AWS_SECRET_ACCESS_KEY,
 			"",
 		),
 	)
 
 	cfg, err := config.LoadDefaultConfig(
 		context.TODO(),
-		config.WithRegion(configApp.Env.AWS_REGION),
+		config.WithRegion(configApp.AwsEnv.AWS_REGION),
 		config.WithCredentialsProvider(awsCredentials),
 	)
 
@@ -50,7 +50,7 @@ func (s *S3GatewayService) Upload(fileHeaders *multipart.FileHeader, file *multi
 
 	s3Key := fmt.Sprintf("%v.%v", uuid.New().String(), fileHeaders.Filename)
 	s3Res, err := uploader.Upload(context.TODO(), &s3.PutObjectInput{
-		Bucket: aws.String(configApp.Env.AWS_S3_BUCKET_NAME),
+		Bucket: aws.String(configApp.AwsEnv.AWS_S3_BUCKET_NAME),
 		Key:    aws.String(s3Key),
 		Body:   io.Reader(*file),
 	})

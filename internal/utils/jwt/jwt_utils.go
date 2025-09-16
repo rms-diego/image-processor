@@ -32,7 +32,7 @@ func (j *jwtUtils) GenerateToken(user validations.UserFound) (*string, error) {
 		"exp":      time.Now().Add(time.Hour * 24).Unix(),
 	})
 
-	tokenStr, err := token.SignedString([]byte(config.Env.JWT_SECRET))
+	tokenStr, err := token.SignedString([]byte(config.ServerEnv.JWT_SECRET))
 	if err != nil {
 		return nil, err
 	}
@@ -46,7 +46,7 @@ func (j *jwtUtils) ValidateAndDecodeToken(tokenStr string) (*JwtDecoded, error) 
 			return nil, jwt.ErrTokenMalformed
 		}
 
-		return []byte(config.Env.JWT_SECRET), nil
+		return []byte(config.ServerEnv.JWT_SECRET), nil
 	})
 
 	if err != nil {

@@ -7,10 +7,7 @@ import (
 	"github.com/joho/godotenv"
 )
 
-type env struct {
-	PORT                  string
-	JWT_SECRET            string
-	DATABASE_URL          string
+type awsEnv struct {
 	AWS_ACCESS_KEY_ID     string
 	AWS_SECRET_ACCESS_KEY string
 	AWS_REGION            string
@@ -18,13 +15,10 @@ type env struct {
 	AWS_SQS_URL           string
 }
 
-var Env *env
+var AwsEnv *awsEnv
 
-func newEnv() *env {
-	return &env{
-		PORT:                  os.Getenv("PORT"),
-		JWT_SECRET:            os.Getenv("JWT_SECRET"),
-		DATABASE_URL:          os.Getenv("DATABASE_URL"),
+func newAwsEnv() *awsEnv {
+	return &awsEnv{
 		AWS_ACCESS_KEY_ID:     os.Getenv("AWS_ACCESS_KEY_ID"),
 		AWS_SECRET_ACCESS_KEY: os.Getenv("AWS_SECRET_ACCESS_KEY"),
 		AWS_REGION:            os.Getenv("AWS_REGION"),
@@ -33,19 +27,10 @@ func newEnv() *env {
 	}
 }
 
-func Init() error {
+func InitAwsCfg() error {
 	godotenv.Load()
 
 	switch {
-	case os.Getenv("PORT") == "":
-		return fmt.Errorf("PORT variable is not set")
-
-	case os.Getenv("JWT_SECRET") == "":
-		return fmt.Errorf("JWT_SECRET variable is not set")
-
-	case os.Getenv("DATABASE_URL") == "":
-		return fmt.Errorf("DATABASE_URL variable is not set")
-
 	case os.Getenv("AWS_ACCESS_KEY_ID") == "":
 		return fmt.Errorf("AWS_ACCESS_KEY_ID variable is not set")
 
@@ -62,7 +47,7 @@ func Init() error {
 		return fmt.Errorf("AWS_SQS_URL variable is not set")
 
 	default:
-		Env = newEnv()
+		AwsEnv = newAwsEnv()
 		return nil
 	}
 }

@@ -13,7 +13,7 @@ var Db *goqu.Database
 
 func Init() error {
 	dialect := goqu.Dialect("postgres")
-	pgDb, err := sql.Open("postgres", config.Env.DATABASE_URL)
+	pgDb, err := sql.Open("postgres", config.ServerEnv.DATABASE_URL)
 	if err != nil {
 		return err
 	}
