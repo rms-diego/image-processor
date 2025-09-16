@@ -14,17 +14,16 @@ func main() {
 		panic(err)
 	}
 
-	if err := config.InitAwsCfg(); err != nil {
-		panic(err)
-	}
-
 	if err := database.Init(); err != nil {
 		panic(err)
 	}
 
-	if err := gateway.InitSQS(); err != nil {
+	if err := config.InitAwsCfg(); err != nil {
 		panic(err)
 	}
+
+	gateway.InitS3()
+	gateway.InitSQS()
 
 	app := gin.Default()
 	app.Use(middleware.ErrorHandler())

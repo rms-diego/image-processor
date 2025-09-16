@@ -5,9 +5,6 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/aws/aws-sdk-go-v2/aws"
-	"github.com/aws/aws-sdk-go-v2/config"
-	"github.com/aws/aws-sdk-go-v2/credentials"
 	"github.com/aws/aws-sdk-go-v2/service/sqs"
 	"github.com/aws/aws-sdk-go-v2/service/sqs/types"
 	configApp "github.com/rms-diego/image-processor/pkg/config"
@@ -25,33 +22,13 @@ type SqsGatewayServiceInterface interface {
 
 var SqsGateway *sqsGateway
 
-func InitSQS() error {
-	ctx := context.TODO()
-	awsCredentials := aws.NewCredentialsCache(
-		credentials.NewStaticCredentialsProvider(
-			configApp.AwsEnv.AWS_ACCESS_KEY_ID,
-			configApp.AwsEnv.AWS_SECRET_ACCESS_KEY,
-			"",
-		),
-	)
-
-	cfg, err := config.LoadDefaultConfig(
-		ctx,
-		config.WithRegion(configApp.AwsEnv.AWS_REGION),
-		config.WithCredentialsProvider(awsCredentials),
-	)
-
-	if err != nil {
-		return err
-	}
-
-	client := sqs.NewFromConfig(cfg)
+func InitSQS() {
+	client := sqs.NewFromConfig(configApp.AwsCfg.AWS_CFG)
 	SqsGateway = newSqsGateway(client)
-	return nil
 }
 
 func newSqsGateway(client *sqs.Client) *sqsGateway {
-	return &sqsGateway{sqsClient: client, sqsUrl: configApp.AwsEnv.AWS_SQS_URL}
+	return &sqsGateway{sqsClient: client, sqsUrl: configApp.AwsCfg.AWS_SQS_URL}
 }
 
 func (g *sqsGateway) SendMessage(messageBody string) error {
