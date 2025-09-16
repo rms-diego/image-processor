@@ -15,7 +15,7 @@ type sqsGateway struct {
 	sqsUrl    string
 }
 
-type SqsGatewayServiceInterface interface {
+type SqsGatewayInterface interface {
 	SendMessage(messageBody string) error
 	GetMessages() ([]types.Message, error)
 }
