@@ -10,9 +10,9 @@ import (
 	jwtutils "github.com/rms-diego/image-processor/internal/utils/jwt"
 )
 
-var r = authRepository.NewRepository(database.Db)
-
 func AuthHandler() gin.HandlerFunc {
+	r := authRepository.NewRepository(database.Db)
+
 	return func(c *gin.Context) {
 		token := c.GetHeader("Authorization")
 

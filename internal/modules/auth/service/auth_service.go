@@ -26,7 +26,7 @@ func NewService(repository authRepository.AuthRepositoryInterface) AuthServiceIn
 func (s *authService) Register(payload *validations.AuthRequest) error {
 	userFound, err := s.Repository.FindByUsername(payload.Username)
 	if err != nil {
-		return exception.New(err.Error(), http.StatusInternalServerError)
+		return err
 	}
 
 	if userFound != nil {
@@ -36,7 +36,7 @@ func (s *authService) Register(payload *validations.AuthRequest) error {
 	passwordBytes := []byte(payload.Password)
 	hashedPassword, err := bcrypt.GenerateFromPassword(passwordBytes, bcrypt.DefaultCost)
 	if err != nil {
-		return exception.New(err.Error(), http.StatusInternalServerError)
+		return err
 	}
 
 	err = s.Repository.Register(&validations.AuthRequest{
@@ -54,7 +54,7 @@ func (s *authService) Register(payload *validations.AuthRequest) error {
 func (s *authService) Login(payload *validations.AuthRequest) (*string, error) {
 	userFound, err := s.Repository.FindByUsername(payload.Username)
 	if err != nil {
-		return nil, exception.New(err.Error(), http.StatusInternalServerError)
+		return nil, err
 	}
 
 	if userFound == nil {

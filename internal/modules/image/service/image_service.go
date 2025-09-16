@@ -28,6 +28,7 @@ func (s *imageService) UploadImage(userID string, fh *multipart.FileHeader) erro
 	if err != nil {
 		return err
 	}
+
 	defer f.Close()
 
 	location, s3Key, err := s.s3Gateway.Upload(fh, &f)

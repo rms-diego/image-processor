@@ -29,15 +29,15 @@ func (h *imageHandler) UploadImage(c *gin.Context) {
 		return
 	}
 
-	user := tokenDecoded.(jwtutils.JwtDecoded)
 	file, err := c.FormFile("file")
 	if err != nil || file == nil {
 		c.Error(exception.New("file is required", http.StatusBadRequest))
 		return
 	}
 
+	user := tokenDecoded.(jwtutils.JwtDecoded)
 	if err := h.service.UploadImage(user.ID, file); err != nil {
-		c.Error(exception.New(err.Error(), http.StatusInternalServerError))
+		c.Error(err)
 		return
 	}
 
