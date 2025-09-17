@@ -7,8 +7,8 @@ import (
 
 type ImageRepositoryInterface interface {
 	UploadImage(userId, fileUrl, s3Key *string) error
-	GetImageById(imageId string) (*string, error)
-	GetImages(limit, page *int) (*validations.ImagesFound, *int, error)
+	GetImageById(imageId string) (*validations.Image, error)
+	GetImages(limit, page *int) (*validations.ManyImages, *int, error)
 }
 
 type imageRepository struct {
@@ -41,13 +41,13 @@ func (r *imageRepository) UploadImage(userId, fileUrl, s3Key *string) error {
 	return nil
 }
 
-func (r *imageRepository) GetImageById(imageId string) (*string, error) {
-	var image string
+func (r *imageRepository) GetImageById(imageId string) (*validations.Image, error) {
+	var image validations.Image
 
 	found, err := r.database.From("images").
-		Select("url").
+		Select("*").
 		Where(goqu.Ex{"id": imageId}).
-		ScanVal(&image)
+		ScanStruct(&image)
 
 	if err != nil {
 		return nil, err
@@ -60,8 +60,8 @@ func (r *imageRepository) GetImageById(imageId string) (*string, error) {
 	return &image, nil
 }
 
-func (r *imageRepository) GetImages(limit, page *int) (*validations.ImagesFound, *int, error) {
-	var images validations.ImagesFound
+func (r *imageRepository) GetImages(limit, page *int) (*validations.ManyImages, *int, error) {
+	var images validations.ManyImages
 
 	err := r.database.From("images").
 		Select("id", "url", "created_at").

@@ -69,7 +69,7 @@ func (s *imageService) GetImageById(imageId string) (*string, error) {
 		return nil, exception.New("image not found", http.StatusNotFound)
 	}
 
-	return image, nil
+	return &image.URL, nil
 }
 
 func (s *imageService) GetImages(limit, page string) (*validations.ListImagesResponse, error) {
@@ -142,7 +142,7 @@ func (s *imageService) TransformImage(imageId string, payload *validations.Trans
 	}
 
 	queueJson := validations.TransformMessageQueue{
-		ImageID: imageId,
+		S3Key:   image.S3Key,
 		Payload: *payload,
 	}
 
