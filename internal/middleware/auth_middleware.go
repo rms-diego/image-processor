@@ -5,7 +5,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/rms-diego/image-processor/internal/database"
-	authRepository "github.com/rms-diego/image-processor/internal/modules/auth/repository"
+	authRepository "github.com/rms-diego/image-processor/internal/modules/auth/auth_repository"
 	"github.com/rms-diego/image-processor/internal/utils/exception"
 	jwtutils "github.com/rms-diego/image-processor/internal/utils/jwt"
 )

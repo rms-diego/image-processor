@@ -1,22 +1,22 @@
-package imageService
+package imageservice
 
 import (
 	"mime/multipart"
 
-	imageRepository "github.com/rms-diego/image-processor/internal/modules/image/repository"
+	repository "github.com/rms-diego/image-processor/internal/modules/image/image_repository"
 	"github.com/rms-diego/image-processor/pkg/gateway"
 )
 
 type imageService struct {
 	s3Gateway  gateway.S3GatewayInterface
-	repository imageRepository.ImageRepositoryInterface
+	repository repository.ImageRepositoryInterface
 }
 
 type ImageServiceInterface interface {
 	UploadImage(userID string, file *multipart.FileHeader) error
 }
 
-func NewService(s3Gateway gateway.S3GatewayInterface, repository imageRepository.ImageRepositoryInterface) ImageServiceInterface {
+func NewService(s3Gateway gateway.S3GatewayInterface, repository repository.ImageRepositoryInterface) ImageServiceInterface {
 	return &imageService{
 		s3Gateway:  s3Gateway,
 		repository: repository,

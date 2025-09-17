@@ -1,4 +1,4 @@
-package imageRepository
+package imagerepository
 
 import (
 	"github.com/doug-martin/goqu/v9"

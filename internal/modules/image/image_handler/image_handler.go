@@ -1,4 +1,4 @@
-package imageHandler
+package imagehandler
 
 import (
 	"net/http"
@@ -7,18 +7,18 @@ import (
 	"github.com/rms-diego/image-processor/internal/utils/exception"
 	jwtutils "github.com/rms-diego/image-processor/internal/utils/jwt"
 
-	imageService "github.com/rms-diego/image-processor/internal/modules/image/service"
+	service "github.com/rms-diego/image-processor/internal/modules/image/image_service"
 )
 
 type imageHandler struct {
-	service imageService.ImageServiceInterface
+	service service.ImageServiceInterface
 }
 
 type ImageHandlerInterface interface {
 	UploadImage(c *gin.Context)
 }
 
-func NewHandler(service imageService.ImageServiceInterface) ImageHandlerInterface {
+func NewHandler(service service.ImageServiceInterface) ImageHandlerInterface {
 	return &imageHandler{service: service}
 }
 

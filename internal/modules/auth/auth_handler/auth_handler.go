@@ -1,10 +1,10 @@
-package authHandler
+package authhandler
 
 import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	usersService "github.com/rms-diego/image-processor/internal/modules/auth/service"
+	service "github.com/rms-diego/image-processor/internal/modules/auth/auth_service"
 	"github.com/rms-diego/image-processor/internal/utils/exception"
 	"github.com/rms-diego/image-processor/internal/validations"
 )
@@ -15,10 +15,10 @@ type AuthHandlerInterface interface {
 }
 
 type authHandler struct {
-	Service usersService.AuthServiceInterface
+	Service service.AuthServiceInterface
 }
 
-func NewHandler(service usersService.AuthServiceInterface) AuthHandlerInterface {
+func NewHandler(service service.AuthServiceInterface) AuthHandlerInterface {
 	return &authHandler{Service: service}
 }
 

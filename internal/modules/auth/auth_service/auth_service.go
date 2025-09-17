@@ -1,9 +1,9 @@
-package authService
+package authservice
 
 import (
 	"net/http"
 
-	authRepository "github.com/rms-diego/image-processor/internal/modules/auth/repository"
+	repository "github.com/rms-diego/image-processor/internal/modules/auth/auth_repository"
 	"github.com/rms-diego/image-processor/internal/utils/exception"
 	jwtutils "github.com/rms-diego/image-processor/internal/utils/jwt"
 	"github.com/rms-diego/image-processor/internal/validations"
@@ -16,10 +16,10 @@ type AuthServiceInterface interface {
 }
 
 type authService struct {
-	Repository authRepository.AuthRepositoryInterface
+	Repository repository.AuthRepositoryInterface
 }
 
-func NewService(repository authRepository.AuthRepositoryInterface) AuthServiceInterface {
+func NewService(repository repository.AuthRepositoryInterface) AuthServiceInterface {
 	return &authService{Repository: repository}
 }
 

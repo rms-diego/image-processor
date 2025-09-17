@@ -3,15 +3,15 @@ package auth
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/rms-diego/image-processor/internal/database"
-	authHandler "github.com/rms-diego/image-processor/internal/modules/auth/handler"
-	authRepository "github.com/rms-diego/image-processor/internal/modules/auth/repository"
-	authService "github.com/rms-diego/image-processor/internal/modules/auth/service"
+	authhandler "github.com/rms-diego/image-processor/internal/modules/auth/auth_handler"
+	authrepository "github.com/rms-diego/image-processor/internal/modules/auth/auth_repository"
+	authservice "github.com/rms-diego/image-processor/internal/modules/auth/auth_service"
 )
 
 func RouteInit(g *gin.RouterGroup) {
-	r := authRepository.NewRepository(database.Db)
-	s := authService.NewService(r)
-	h := authHandler.NewHandler(s)
+	r := authrepository.NewRepository(database.Db)
+	s := authservice.NewService(r)
+	h := authhandler.NewHandler(s)
 
 	g.POST("/register", h.Register)
 	g.POST("/", h.Login)

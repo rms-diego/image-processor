@@ -4,18 +4,18 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/rms-diego/image-processor/internal/database"
 	"github.com/rms-diego/image-processor/internal/middleware"
-	imageHandler "github.com/rms-diego/image-processor/internal/modules/image/handler"
-	imageRepository "github.com/rms-diego/image-processor/internal/modules/image/repository"
-	imageService "github.com/rms-diego/image-processor/internal/modules/image/service"
+	imagehandler "github.com/rms-diego/image-processor/internal/modules/image/image_handler"
+	imagerepository "github.com/rms-diego/image-processor/internal/modules/image/image_repository"
+	imageservice "github.com/rms-diego/image-processor/internal/modules/image/image_service"
 	"github.com/rms-diego/image-processor/pkg/gateway"
 )
 
 func RouteInit(g *gin.RouterGroup) {
 	g.Use(middleware.AuthHandler())
 
-	r := imageRepository.NewImageRepository(database.Db)
-	s := imageService.NewService(gateway.S3Gateway, r)
-	h := imageHandler.NewHandler(s)
+	r := imagerepository.NewImageRepository(database.Db)
+	s := imageservice.NewService(gateway.S3Gateway, r)
+	h := imagehandler.NewHandler(s)
 
 	g.POST("/", h.UploadImage)
 }

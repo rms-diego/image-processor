@@ -1,4 +1,4 @@
-package authRepository
+package authrepository
 
 import (
 	"github.com/doug-martin/goqu/v9"
