@@ -14,6 +14,7 @@ type imageService struct {
 
 type ImageServiceInterface interface {
 	UploadImage(userID string, file *multipart.FileHeader) error
+	GetImageById(imageId string) (*string, error)
 }
 
 func NewService(s3Gateway gateway.S3GatewayInterface, repository repository.ImageRepositoryInterface) ImageServiceInterface {
@@ -41,4 +42,13 @@ func (s *imageService) UploadImage(userID string, fh *multipart.FileHeader) erro
 	}
 
 	return nil
+}
+
+func (s *imageService) GetImageById(imageId string) (*string, error) {
+	image, err := s.repository.GetImageById(imageId)
+	if err != nil {
+		return nil, err
+	}
+
+	return image, nil
 }

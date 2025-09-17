@@ -17,5 +17,6 @@ func RouteInit(g *gin.RouterGroup) {
 	s := imageservice.NewService(gateway.S3Gateway, r)
 	h := imagehandler.NewHandler(s)
 
+	g.GET("/:imageId", h.GetImageById)
 	g.POST("/", h.UploadImage)
 }

@@ -14,5 +14,5 @@ func Init(r *gin.RouterGroup) {
 	})
 
 	auth.RouteInit(r.Group("/auth"))
-	image.RouteInit(r.Group("/image"))
+	image.RouteInit(r.Group("/images"))
 }

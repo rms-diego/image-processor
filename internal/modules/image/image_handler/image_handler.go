@@ -16,6 +16,7 @@ type imageHandler struct {
 
 type ImageHandlerInterface interface {
 	UploadImage(c *gin.Context)
+	GetImageById(c *gin.Context)
 }
 
 func NewHandler(service service.ImageServiceInterface) ImageHandlerInterface {
@@ -42,4 +43,20 @@ func (h *imageHandler) UploadImage(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusNoContent, nil)
+}
+
+func (h *imageHandler) GetImageById(c *gin.Context) {
+	imageId := c.Param("imageId")
+	if imageId == "" {
+		c.Error(exception.New("imageId is required", http.StatusBadRequest))
+		return
+	}
+
+	image, err := h.service.GetImageById(imageId)
+	if err != nil {
+		c.Error(err)
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"url": image})
 }

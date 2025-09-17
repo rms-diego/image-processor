@@ -6,6 +6,7 @@ import (
 
 type ImageRepositoryInterface interface {
 	UploadImage(userId, fileUrl, s3Key *string) error
+	GetImageById(imageId string) (*string, error)
 }
 
 type imageRepository struct {
@@ -36,4 +37,23 @@ func (r *imageRepository) UploadImage(userId, fileUrl, s3Key *string) error {
 	}
 
 	return nil
+}
+
+func (r *imageRepository) GetImageById(imageId string) (*string, error) {
+	var image string
+
+	found, err := r.database.From("images").
+		Select("url").
+		Where(goqu.Ex{"id": imageId}).
+		ScanVal(&image)
+
+	if err != nil {
+		return nil, err
+	}
+
+	if !found {
+		return nil, nil
+	}
+
+	return &image, nil
 }
