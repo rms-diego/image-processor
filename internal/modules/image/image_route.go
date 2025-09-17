@@ -14,10 +14,11 @@ func RouteInit(g *gin.RouterGroup) {
 	g.Use(middleware.AuthHandler())
 
 	r := imagerepository.NewImageRepository(database.Db)
-	s := imageservice.NewService(gateway.S3Gateway, r)
+	s := imageservice.NewService(gateway.S3Gateway, gateway.SqsGateway, r)
 	h := imagehandler.NewHandler(s)
 
 	g.GET("/:imageId", h.GetImageById)
 	g.GET("/", h.GetImages)
 	g.POST("/", h.UploadImage)
+	g.PUT("/:imageId/transform", h.TransformImage)
 }

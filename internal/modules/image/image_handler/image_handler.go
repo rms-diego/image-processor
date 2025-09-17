@@ -1,11 +1,13 @@
 package imagehandler
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 	"github.com/rms-diego/image-processor/internal/utils/exception"
 	jwtutils "github.com/rms-diego/image-processor/internal/utils/jwt"
+	"github.com/rms-diego/image-processor/internal/validations"
 
 	service "github.com/rms-diego/image-processor/internal/modules/image/image_service"
 )
@@ -18,6 +20,7 @@ type ImageHandlerInterface interface {
 	UploadImage(c *gin.Context)
 	GetImageById(c *gin.Context)
 	GetImages(c *gin.Context)
+	TransformImage(c *gin.Context)
 }
 
 func NewHandler(service service.ImageServiceInterface) ImageHandlerInterface {
@@ -82,4 +85,26 @@ func (h *imageHandler) GetImages(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, images)
+}
+
+func (h *imageHandler) TransformImage(c *gin.Context) {
+	imageId := c.Param("imageId")
+	if imageId == "" {
+		c.Error(exception.New("image id is required", http.StatusBadRequest))
+		return
+	}
+
+	var body validations.TransformImageReqBody
+	if err := c.ShouldBindJSON(&body); err != nil {
+		fmt.Println(err.Error())
+		c.Error(exception.New("invalid body", http.StatusBadRequest))
+		return
+	}
+
+	if err := h.service.TransformImage(imageId, &body); err != nil {
+		c.Error(err)
+		return
+	}
+
+	c.JSON(http.StatusNoContent, nil)
 }

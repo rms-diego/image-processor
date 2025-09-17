@@ -1,6 +1,7 @@
 package imageservice
 
 import (
+	"encoding/json"
 	"mime/multipart"
 	"net/http"
 
@@ -14,6 +15,7 @@ import (
 
 type imageService struct {
 	s3Gateway  gateway.S3GatewayInterface
+	sqsGateway gateway.SqsGatewayInterface
 	repository repository.ImageRepositoryInterface
 }
 
@@ -21,11 +23,13 @@ type ImageServiceInterface interface {
 	UploadImage(userID string, file *multipart.FileHeader) error
 	GetImageById(imageId string) (*string, error)
 	GetImages(limit, page string) (*validations.ListImagesResponse, error)
+	TransformImage(imageId string, payload *validations.TransformImageReqBody) error
 }
 
-func NewService(s3Gateway gateway.S3GatewayInterface, repository repository.ImageRepositoryInterface) ImageServiceInterface {
+func NewService(s3Gateway gateway.S3GatewayInterface, sqsGateway gateway.SqsGatewayInterface, repository repository.ImageRepositoryInterface) ImageServiceInterface {
 	return &imageService{
 		s3Gateway:  s3Gateway,
+		sqsGateway: sqsGateway,
 		repository: repository,
 	}
 }
@@ -120,4 +124,37 @@ func (s *imageService) GetImages(limit, page string) (*validations.ListImagesRes
 		TotalImages: *count,
 		Data:        *images,
 	}, nil
+}
+
+func (s *imageService) TransformImage(imageId string, payload *validations.TransformImageReqBody) error {
+	_, err := uuid.Parse(imageId)
+	if err != nil {
+		return exception.New("invalid image id", http.StatusBadRequest)
+	}
+
+	image, err := s.repository.GetImageById(imageId)
+	if err != nil {
+		return err
+	}
+
+	if image == nil {
+		return exception.New("image not found", http.StatusNotFound)
+	}
+
+	queueJson := validations.TransformMessageQueue{
+		ImageID: imageId,
+		Payload: *payload,
+	}
+
+	jm, err := json.Marshal(queueJson)
+	if err != nil {
+		return err
+	}
+
+	queueMessage := string(jm)
+	if err := s.sqsGateway.SendMessage(&queueMessage); err != nil {
+		return err
+	}
+
+	return nil
 }

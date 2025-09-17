@@ -16,7 +16,7 @@ type sqsGateway struct {
 }
 
 type SqsGatewayInterface interface {
-	SendMessage(messageBody string) error
+	SendMessage(messageBody *string) error
 	GetMessages() ([]types.Message, error)
 }
 
@@ -31,13 +31,13 @@ func newSqsGateway(client *sqs.Client) *sqsGateway {
 	return &sqsGateway{sqsClient: client, sqsUrl: configApp.AwsCfg.AWS_SQS_URL}
 }
 
-func (g *sqsGateway) SendMessage(messageBody string) error {
+func (g *sqsGateway) SendMessage(messageBody *string) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
 	_, err := g.sqsClient.SendMessage(ctx, &sqs.SendMessageInput{
 		QueueUrl:    &g.sqsUrl,
-		MessageBody: &messageBody,
+		MessageBody: messageBody,
 	})
 
 	if err != nil {
