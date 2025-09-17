@@ -18,5 +18,6 @@ func RouteInit(g *gin.RouterGroup) {
 	h := imagehandler.NewHandler(s)
 
 	g.GET("/:imageId", h.GetImageById)
+	g.GET("/", h.GetImages)
 	g.POST("/", h.UploadImage)
 }

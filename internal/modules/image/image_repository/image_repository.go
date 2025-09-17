@@ -2,11 +2,13 @@ package imagerepository
 
 import (
 	"github.com/doug-martin/goqu/v9"
+	"github.com/rms-diego/image-processor/internal/validations"
 )
 
 type ImageRepositoryInterface interface {
 	UploadImage(userId, fileUrl, s3Key *string) error
 	GetImageById(imageId string) (*string, error)
+	GetImages(limit, page *int) (*validations.ImagesFound, *int, error)
 }
 
 type imageRepository struct {
@@ -56,4 +58,29 @@ func (r *imageRepository) GetImageById(imageId string) (*string, error) {
 	}
 
 	return &image, nil
+}
+
+func (r *imageRepository) GetImages(limit, page *int) (*validations.ImagesFound, *int, error) {
+	var images validations.ImagesFound
+
+	err := r.database.From("images").
+		Select("id", "url", "created_at").
+		Limit(uint(*limit)).
+		Offset(uint(*page)).
+		ScanStructs(&images)
+
+	if err != nil {
+		return nil, nil, err
+	}
+
+	var count int
+	_, err = r.database.From("images").
+		Select(goqu.COUNT("*").As("count")).
+		ScanVal(&count)
+
+	if err != nil {
+		return nil, nil, err
+	}
+
+	return &images, &count, nil
 }
