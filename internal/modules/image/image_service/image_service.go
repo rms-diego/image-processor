@@ -4,6 +4,7 @@ import (
 	"mime/multipart"
 	"net/http"
 
+	"github.com/google/uuid"
 	repository "github.com/rms-diego/image-processor/internal/modules/image/image_repository"
 	"github.com/rms-diego/image-processor/internal/utils/exception"
 	"github.com/rms-diego/image-processor/internal/utils/parse"
@@ -50,9 +51,18 @@ func (s *imageService) UploadImage(userID string, fh *multipart.FileHeader) erro
 }
 
 func (s *imageService) GetImageById(imageId string) (*string, error) {
+	_, err := uuid.Parse(imageId)
+	if err != nil {
+		return nil, exception.New("invalid image id", http.StatusBadRequest)
+	}
+
 	image, err := s.repository.GetImageById(imageId)
 	if err != nil {
 		return nil, err
+	}
+
+	if image == nil {
+		return nil, exception.New("image not found", http.StatusNotFound)
 	}
 
 	return image, nil
