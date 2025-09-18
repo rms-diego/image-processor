@@ -22,10 +22,11 @@ var S3Gateway *s3Gateway
 
 type S3GatewayInterface interface {
 	Upload(fileHeaders *multipart.FileHeader, file *multipart.File) (*string, *string, error)
+	GetObject(s3Key *string) (*s3.GetObjectOutput, error)
 }
 
 func newService() *s3Gateway {
-	client := s3.NewFromConfig(configApp.AwsCfg.AWS_CFG)
+	client := s3.NewFromConfig(configApp.GatewayCfg.AWS_CFG)
 
 	return &s3Gateway{client: client}
 }
@@ -39,7 +40,7 @@ func (s *s3Gateway) Upload(fileHeaders *multipart.FileHeader, file *multipart.Fi
 
 	s3Key := fmt.Sprintf("%v.%v", uuid.New().String(), fileHeaders.Filename)
 	s3Res, err := uploader.Upload(context.TODO(), &s3.PutObjectInput{
-		Bucket: aws.String(configApp.AwsCfg.AWS_S3_BUCKET_NAME),
+		Bucket: aws.String(configApp.GatewayCfg.AWS_S3_BUCKET_NAME),
 		Key:    aws.String(s3Key),
 		Body:   io.Reader(*file),
 	})
@@ -49,4 +50,17 @@ func (s *s3Gateway) Upload(fileHeaders *multipart.FileHeader, file *multipart.Fi
 	}
 
 	return &s3Res.Location, &s3Key, nil
+}
+
+func (s *s3Gateway) GetObject(s3Key *string) (*s3.GetObjectOutput, error) {
+	output, err := s.client.GetObject(context.TODO(), &s3.GetObjectInput{
+		Bucket: aws.String(configApp.GatewayCfg.AWS_S3_BUCKET_NAME),
+		Key:    s3Key,
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	return output, nil
 }
