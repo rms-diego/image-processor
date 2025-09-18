@@ -9,7 +9,7 @@ import (
 )
 
 func RouteInit(g *gin.RouterGroup) {
-	r := authrepository.NewRepository(database.Db)
+	r := authrepository.NewRepository(database.DB)
 	s := authservice.NewService(r)
 	h := authhandler.NewHandler(s)
 

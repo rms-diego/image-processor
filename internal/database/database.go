@@ -9,7 +9,7 @@ import (
 	"github.com/rms-diego/image-processor/pkg/config"
 )
 
-var Db *goqu.Database
+var DB *goqu.Database
 
 func Init() error {
 	dialect := goqu.Dialect("postgres")
@@ -22,6 +22,6 @@ func Init() error {
 		return err
 	}
 
-	Db = dialect.DB(pgDb)
+	DB = dialect.DB(pgDb)
 	return nil
 }

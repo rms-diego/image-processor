@@ -13,7 +13,7 @@ import (
 func RouteInit(g *gin.RouterGroup) {
 	g.Use(middleware.AuthHandler())
 
-	r := imagerepository.NewImageRepository(database.Db)
+	r := imagerepository.NewImageRepository(database.DB)
 	s := imageservice.NewService(gateway.S3Gateway, gateway.SqsGateway, r)
 	h := imagehandler.NewHandler(s)
 

@@ -11,7 +11,7 @@ import (
 )
 
 func AuthHandler() gin.HandlerFunc {
-	r := authRepository.NewRepository(database.Db)
+	r := authRepository.NewRepository(database.DB)
 
 	return func(c *gin.Context) {
 		token := c.GetHeader("Authorization")
