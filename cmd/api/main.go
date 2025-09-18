@@ -14,11 +14,11 @@ func main() {
 		panic(err)
 	}
 
-	if err := database.Init(); err != nil {
+	if err := database.Init(config.ServerEnv.DATABASE_URL); err != nil {
 		panic(err)
 	}
 
-	if err := config.InitAwsCfg(); err != nil {
+	if err := config.InitGatewayCfg(); err != nil {
 		panic(err)
 	}
 

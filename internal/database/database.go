@@ -6,14 +6,13 @@ import (
 	"github.com/doug-martin/goqu/v9"
 	_ "github.com/doug-martin/goqu/v9/dialect/postgres"
 	_ "github.com/lib/pq"
-	"github.com/rms-diego/image-processor/pkg/config"
 )
 
 var DB *goqu.Database
 
-func Init() error {
+func Init(dsn string) error {
 	dialect := goqu.Dialect("postgres")
-	pgDb, err := sql.Open("postgres", config.ServerEnv.DATABASE_URL)
+	pgDb, err := sql.Open("postgres", dsn)
 	if err != nil {
 		return err
 	}
