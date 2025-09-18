@@ -13,6 +13,7 @@ import (
 type sqsGateway struct {
 	sqsClient *sqs.Client
 	sqsUrl    string
+	ctx       context.Context
 }
 
 type SqsGatewayInterface interface {
@@ -23,16 +24,16 @@ type SqsGatewayInterface interface {
 var SqsGateway *sqsGateway
 
 func InitSQS() {
-	client := sqs.NewFromConfig(configApp.AwsCfg.AWS_CFG)
+	client := sqs.NewFromConfig(configApp.GatewayCfg.AWS_CFG)
 	SqsGateway = newSqsGateway(client)
 }
 
 func newSqsGateway(client *sqs.Client) *sqsGateway {
-	return &sqsGateway{sqsClient: client, sqsUrl: configApp.AwsCfg.AWS_SQS_URL}
+	return &sqsGateway{sqsClient: client, sqsUrl: configApp.GatewayCfg.AWS_SQS_URL, ctx: context.TODO()}
 }
 
 func (g *sqsGateway) SendMessage(messageBody *string) error {
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	ctx, cancel := context.WithTimeout(g.ctx, 5*time.Second)
 	defer cancel()
 
 	_, err := g.sqsClient.SendMessage(ctx, &sqs.SendMessageInput{
@@ -48,7 +49,7 @@ func (g *sqsGateway) SendMessage(messageBody *string) error {
 }
 
 func (g *sqsGateway) GetMessages() ([]types.Message, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	ctx, cancel := context.WithTimeout(g.ctx, 5*time.Second)
 	defer cancel()
 
 	output, err := g.sqsClient.ReceiveMessage(ctx, &sqs.ReceiveMessageInput{
