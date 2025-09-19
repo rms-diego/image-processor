@@ -2,6 +2,8 @@ package imageservice
 
 import (
 	"encoding/json"
+	"fmt"
+	"io"
 	"mime/multipart"
 	"net/http"
 
@@ -42,12 +44,19 @@ func (s *imageService) UploadImage(userID string, fh *multipart.FileHeader) erro
 
 	defer f.Close()
 
-	location, s3Key, err := s.s3Gateway.Upload(fh, &f)
+	fileKey := fmt.Sprintf("%v.%v", uuid.New().String(), fh.Filename)
+
+	fileBytes, err := io.ReadAll(f)
 	if err != nil {
 		return err
 	}
 
-	if err := s.repository.UploadImage(&userID, location, s3Key); err != nil {
+	location, err := s.s3Gateway.Upload(&fileKey, &fileBytes)
+	if err != nil {
+		return err
+	}
+
+	if err := s.repository.UploadImage(&userID, location, &fileKey); err != nil {
 		return err
 	}
 
@@ -141,18 +150,18 @@ func (s *imageService) TransformImage(imageId string, payload *validations.Trans
 		return exception.New("image not found", http.StatusNotFound)
 	}
 
-	queueJson := validations.TransformMessageQueue{
+	queueStruct := validations.TransformMessageQueue{
 		S3Key:   image.S3Key,
 		Payload: *payload,
 	}
 
-	jm, err := json.Marshal(queueJson)
+	j, err := json.Marshal(queueStruct)
 	if err != nil {
 		return err
 	}
 
-	queueMessage := string(jm)
-	if err := s.sqsGateway.SendMessage(&queueMessage); err != nil {
+	m := string(j)
+	if err := s.sqsGateway.SendMessage(&m); err != nil {
 		return err
 	}
 

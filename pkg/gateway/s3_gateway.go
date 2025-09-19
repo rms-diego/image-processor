@@ -1,17 +1,14 @@
 package gateway
 
 import (
+	"bytes"
 	"context"
-	"fmt"
-	"io"
-	"mime/multipart"
 
 	configApp "github.com/rms-diego/image-processor/pkg/config"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/feature/s3/manager"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
-	"github.com/google/uuid"
 )
 
 type s3Gateway struct {
@@ -22,7 +19,7 @@ type s3Gateway struct {
 var S3Gateway *s3Gateway
 
 type S3GatewayInterface interface {
-	Upload(fileHeaders *multipart.FileHeader, file *multipart.File) (*string, *string, error)
+	Upload(s3Key *string, fileBytes *[]byte) (*string, error)
 	GetObject(s3Key *string) (*s3.GetObjectOutput, error)
 }
 
@@ -36,21 +33,20 @@ func InitS3() {
 	S3Gateway = newService()
 }
 
-func (s *s3Gateway) Upload(fileHeaders *multipart.FileHeader, file *multipart.File) (*string, *string, error) {
+func (s *s3Gateway) Upload(s3Key *string, fileBytes *[]byte) (*string, error) {
 	uploader := manager.NewUploader(s.client)
 
-	s3Key := fmt.Sprintf("%v.%v", uuid.New().String(), fileHeaders.Filename)
 	s3Res, err := uploader.Upload(s.ctx, &s3.PutObjectInput{
 		Bucket: aws.String(configApp.GatewayCfg.AWS_S3_BUCKET_NAME),
-		Key:    aws.String(s3Key),
-		Body:   io.Reader(*file),
+		Key:    aws.String(*s3Key),
+		Body:   bytes.NewReader(*fileBytes),
 	})
 
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
 
-	return &s3Res.Location, &s3Key, nil
+	return &s3Res.Location, nil
 }
 
 func (s *s3Gateway) GetObject(s3Key *string) (*s3.GetObjectOutput, error) {
