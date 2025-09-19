@@ -20,5 +20,5 @@ func RouteInit(g *gin.RouterGroup) {
 	g.GET("/:imageId", h.GetImageById)
 	g.GET("/", h.GetImages)
 	g.POST("/", h.UploadImage)
-	g.PUT("/:imageId/transform", h.TransformImage)
+	g.POST("/:imageId/transform", h.TransformImage)
 }
