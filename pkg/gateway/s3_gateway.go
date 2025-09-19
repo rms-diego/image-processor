@@ -20,6 +20,7 @@ var S3Gateway *s3Gateway
 
 type S3GatewayInterface interface {
 	Upload(s3Key *string, fileBytes *[]byte) (*string, error)
+	RemoveObject(s3Key *string) error
 	GetObject(s3Key *string) (*s3.GetObjectOutput, error)
 }
 
@@ -47,6 +48,19 @@ func (s *s3Gateway) Upload(s3Key *string, fileBytes *[]byte) (*string, error) {
 	}
 
 	return &s3Res.Location, nil
+}
+
+func (s *s3Gateway) RemoveObject(s3Key *string) error {
+	_, err := s.client.DeleteObject(s.ctx, &s3.DeleteObjectInput{
+		Bucket: aws.String(configApp.GatewayCfg.AWS_S3_BUCKET_NAME),
+		Key:    s3Key,
+	})
+
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (s *s3Gateway) GetObject(s3Key *string) (*s3.GetObjectOutput, error) {

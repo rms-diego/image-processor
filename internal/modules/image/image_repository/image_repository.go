@@ -6,8 +6,9 @@ import (
 )
 
 type ImageRepositoryInterface interface {
-	UploadImage(userId, fileUrl, s3Key *string) error
-	GetImageById(imageId string) (*validations.Image, error)
+	UploadImage(userID, fileUrl, s3Key *string) error
+	UpdateImage(imageID, s3Key, url *string) error
+	GetImageById(imageID string) (*validations.Image, error)
 	GetImages(limit, page *int) (*validations.ManyImages, *int, error)
 }
 
@@ -21,10 +22,10 @@ func NewImageRepository(database *goqu.Database) ImageRepositoryInterface {
 	}
 }
 
-func (r *imageRepository) UploadImage(userId, fileUrl, s3Key *string) error {
+func (r *imageRepository) UploadImage(userID, fileUrl, s3Key *string) error {
 	query := goqu.Record{
 		"url":     *fileUrl,
-		"user_id": *userId,
+		"user_id": *userID,
 		"s3_key":  *s3Key,
 	}
 
@@ -41,12 +42,12 @@ func (r *imageRepository) UploadImage(userId, fileUrl, s3Key *string) error {
 	return nil
 }
 
-func (r *imageRepository) GetImageById(imageId string) (*validations.Image, error) {
+func (r *imageRepository) GetImageById(imageID string) (*validations.Image, error) {
 	var image validations.Image
 
 	found, err := r.database.From("images").
 		Select("*").
-		Where(goqu.Ex{"id": imageId}).
+		Where(goqu.Ex{"id": imageID}).
 		ScanStruct(&image)
 
 	if err != nil {
@@ -83,4 +84,24 @@ func (r *imageRepository) GetImages(limit, page *int) (*validations.ManyImages, 
 	}
 
 	return &images, &count, nil
+}
+
+func (r *imageRepository) UpdateImage(imageID, s3Key, url *string) error {
+	query := goqu.Record{
+		"s3_key": *s3Key,
+		"url":    *url,
+	}
+
+	_, err := r.database.From("images").
+		Where(goqu.Ex{"id": imageID}).
+		Update().
+		Set(query).
+		Executor().
+		Exec()
+
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

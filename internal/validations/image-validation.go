@@ -42,6 +42,7 @@ type filterOptions struct {
 }
 
 type TransformMessageQueue struct {
+	ImageID string                `json:"image_id"`
 	S3Key   string                `json:"s3_key"`
 	Payload TransformImageReqBody `json:"payload"`
 }
