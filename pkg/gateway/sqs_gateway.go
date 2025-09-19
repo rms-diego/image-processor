@@ -34,7 +34,7 @@ func newSqsGateway(client *sqs.Client) *sqsGateway {
 }
 
 func (g *sqsGateway) SendMessage(messageBody *string) error {
-	ctx, cancel := context.WithTimeout(g.ctx, 5*time.Second)
+	ctx, cancel := context.WithTimeout(g.ctx, 20*time.Second)
 	defer cancel()
 
 	_, err := g.sqsClient.SendMessage(ctx, &sqs.SendMessageInput{
@@ -43,32 +43,32 @@ func (g *sqsGateway) SendMessage(messageBody *string) error {
 	})
 
 	if err != nil {
-		return fmt.Errorf("failed to send message to SQS: %w", err)
+		return fmt.Errorf("failed to send message to SQS: %v", err)
 	}
 
 	return nil
 }
 
 func (g *sqsGateway) GetMessages() ([]types.Message, error) {
-	ctx, cancel := context.WithTimeout(g.ctx, 5*time.Second)
+	ctx, cancel := context.WithTimeout(g.ctx, 20*time.Second)
 	defer cancel()
 
 	output, err := g.sqsClient.ReceiveMessage(ctx, &sqs.ReceiveMessageInput{
 		QueueUrl:            &g.sqsUrl,
 		MaxNumberOfMessages: 10,
-		WaitTimeSeconds:     5,
+		WaitTimeSeconds:     20,
 		VisibilityTimeout:   30,
 	})
 
 	if err != nil {
-		return nil, fmt.Errorf("failed to receive messages from SQS: %w", err)
+		return nil, fmt.Errorf("failed to receive messages from SQS: %v", err)
 	}
 
 	return output.Messages, nil
 }
 
 func (g *sqsGateway) RemoveMessage(receiptHandle *string) error {
-	ctx, cancel := context.WithTimeout(g.ctx, 5*time.Second)
+	ctx, cancel := context.WithTimeout(g.ctx, 20*time.Second)
 	defer cancel()
 
 	_, err := g.sqsClient.DeleteMessage(ctx, &sqs.DeleteMessageInput{
