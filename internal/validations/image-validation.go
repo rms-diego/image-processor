@@ -21,6 +21,7 @@ type TransformImageReqBody struct {
 	Rotate  *int           `json:"rotate,omitempty"`
 	Format  *string        `json:"format,omitempty"`
 	Filters *filterOptions `json:"filters,omitempty"`
+	Quality *int           `json:"quality,omitempty"`
 }
 
 type resizeOptions struct {
