@@ -19,6 +19,7 @@ type sqsGateway struct {
 type SqsGatewayInterface interface {
 	SendMessage(messageBody *string) error
 	GetMessages() ([]types.Message, error)
+	RemoveMessage(receiptHandle *string) error
 }
 
 var SqsGateway *sqsGateway
@@ -64,4 +65,20 @@ func (g *sqsGateway) GetMessages() ([]types.Message, error) {
 	}
 
 	return output.Messages, nil
+}
+
+func (g *sqsGateway) RemoveMessage(receiptHandle *string) error {
+	ctx, cancel := context.WithTimeout(g.ctx, 5*time.Second)
+	defer cancel()
+
+	_, err := g.sqsClient.DeleteMessage(ctx, &sqs.DeleteMessageInput{
+		QueueUrl:      &g.sqsUrl,
+		ReceiptHandle: receiptHandle,
+	})
+
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
