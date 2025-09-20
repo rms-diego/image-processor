@@ -1,9 +1,11 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
-	"time"
+	"io"
 
 	"github.com/aws/aws-sdk-go-v2/service/sqs/types"
 	"github.com/rms-diego/image-processor/internal/database"
@@ -32,24 +34,28 @@ func main() {
 
 	for {
 		sqsMessages, err := gateway.SqsGateway.GetMessages()
-		if err != nil {
-			fmt.Println("Error getting messages from SQS:", err)
-			time.Sleep(800 * time.Millisecond)
+		if err != nil && !errors.Is(err, context.DeadlineExceeded) {
 			continue
 		}
 
-		if len(sqsMessages) == 0 {
-			time.Sleep(800 * time.Millisecond)
+		if err != nil {
+			fmt.Println("Error getting messages from SQS:", err)
 			continue
 		}
 
 		for _, msg := range sqsMessages {
 			fmt.Println("Processing message ID:", *msg.MessageId)
-			fmt.Println("Message Body:", *msg.Body)
 
 			if err := processMessages(msg, is); err != nil {
-				return // TODO: IMPLEMENTS DLQ
+				break // TODO: Implement DLQ (Dead Letter Queue)
 			}
+
+			if err := gateway.SqsGateway.RemoveMessage(msg.ReceiptHandle); err != nil {
+				fmt.Println("Error removing message from SQS:", err)
+				break
+			}
+
+			continue
 		}
 	}
 }
@@ -67,8 +73,17 @@ func processMessages(msg types.Message, is imageservice.ImageServiceInterface) e
 		return err
 	}
 
-	fmt.Println("Successfully retrieved object from S3:", s3Object)
-	if err := is.ProcessImage(&s3Object.Body, &formatMessage.Payload); err != nil {
+	file := s3Object.Body
+	defer file.Close()
+
+	fileBuffer, err := io.ReadAll(file)
+	if err != nil {
+		fmt.Println("Error reading file:", err)
+		return err
+	}
+
+	fmt.Println("Successfully retrieved object from S3")
+	if err := is.ProcessImage(&fileBuffer, &formatMessage); err != nil {
 		fmt.Println("Error processing image:", err)
 		return err
 	}
