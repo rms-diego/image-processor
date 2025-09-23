@@ -18,6 +18,7 @@ type sqsGateway struct {
 
 type SqsGatewayInterface interface {
 	SendMessage(messageBody *string) error
+	SendMessageToDLQ(messageBody *string) error
 	GetMessages() ([]types.Message, error)
 	RemoveMessage(receiptHandle *string) error
 }
@@ -44,6 +45,22 @@ func (g *sqsGateway) SendMessage(messageBody *string) error {
 
 	if err != nil {
 		return fmt.Errorf("failed to send message to SQS: %v", err)
+	}
+
+	return nil
+}
+
+func (g *sqsGateway) SendMessageToDLQ(messageBody *string) error {
+	ctx, cancel := context.WithTimeout(g.ctx, 20*time.Second)
+	defer cancel()
+
+	_, err := g.sqsClient.SendMessage(ctx, &sqs.SendMessageInput{
+		QueueUrl:    &configApp.GatewayCfg.AWS_SQS_DLQ_URL,
+		MessageBody: messageBody,
+	})
+
+	if err != nil {
+		return fmt.Errorf("failed to send message to SQS DLQ: %v", err)
 	}
 
 	return nil

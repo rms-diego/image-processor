@@ -15,6 +15,7 @@ type gatewaysCfg struct {
 	DATABASE_URL       string
 	AWS_S3_BUCKET_NAME string
 	AWS_SQS_URL        string
+	AWS_SQS_DLQ_URL    string
 	AWS_CFG            aws.Config
 }
 
@@ -45,6 +46,7 @@ func newGatewayCfg() (*gatewaysCfg, error) {
 
 	return &gatewaysCfg{
 		AWS_SQS_URL:        os.Getenv("AWS_SQS_URL"),
+		AWS_SQS_DLQ_URL:    os.Getenv("AWS_SQS_DLQ_URL"),
 		AWS_S3_BUCKET_NAME: os.Getenv("AWS_S3_BUCKET_NAME"),
 		DATABASE_URL:       os.Getenv("DATABASE_URL"),
 		AWS_CFG:            cfg,
@@ -69,6 +71,9 @@ func InitGatewayCfg() error {
 
 	case os.Getenv("AWS_SQS_URL") == "":
 		return fmt.Errorf("AWS_SQS_URL variable is not set")
+
+	case os.Getenv("AWS_SQS_DLQ_URL") == "":
+		return fmt.Errorf("AWS_SQS_DLQ_URL variable is not set")
 
 	case os.Getenv("DATABASE_URL") == "":
 		return fmt.Errorf("DATABASE_URL variable is not set")

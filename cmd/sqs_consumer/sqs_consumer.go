@@ -47,12 +47,11 @@ func main() {
 			fmt.Println("Processing message ID:", *msg.MessageId)
 
 			if err := processMessages(msg, is); err != nil {
-				break // TODO: Implement DLQ (Dead Letter Queue)
+				gateway.SqsGateway.SendMessageToDLQ(msg.Body)
 			}
 
 			if err := gateway.SqsGateway.RemoveMessage(msg.ReceiptHandle); err != nil {
 				fmt.Println("Error removing message from SQS:", err)
-				break
 			}
 
 			continue
