@@ -1,5 +1,9 @@
 # image-processor
 
+## Tech Stack
+
+[![My Skills](https://skillicons.dev/icons?i=go,postgres,docker,aws)](https://skillicons.dev)
+
 ## About
 
 Asynchronous Image Processing with AWS SQS and S3. This project showcases a scalable architecture for asynchronous image processing using AWS services.
@@ -14,16 +18,13 @@ Asynchronous Image Processing with AWS SQS and S3. This project showcases a scal
 
 Verify api documentation in `/docs`
 
-## Tech Stack
-
-[![My Skills](https://skillicons.dev/icons?i=go,postgres,docker,aws)](https://skillicons.dev)
-
 ## Running local
 
 1. **Install Dependencies**: `go mod tidy`
 2. **Environment variables**: Copy `.env.example` to a new `.env`
-3. **Run Api**: `make run-api`
-4. **Run SQS consumers**: `make run-sqs-consumer`
+3. **Create postgres entities**: run queries in `.infra/init.sql`
+4. **Run Api**: `make run-api`
+5. **Run SQS consumers**: `make run-sqs-consumer`
 
 ## Running with docker
 

@@ -30,6 +30,7 @@ services:
       AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
       AWS_REGION: ${AWS_REGION}
       AWS_S3_BUCKET_NAME: ${AWS_S3_BUCKET_NAME}
+      AWS_SQS_URL: ${AWS_SQS_URL}
     env_file:
       - .env
     depends_on:
@@ -47,6 +48,8 @@ services:
       AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
       AWS_REGION: ${AWS_REGION}
       AWS_S3_BUCKET_NAME: ${AWS_S3_BUCKET_NAME}
+      AWS_SQS_URL: ${AWS_SQS_URL}
+      AWS_SQS_DLQ_URL: ${AWS_SQS_DLQ_URL}
     env_file:
       - .env
     depends_on:
