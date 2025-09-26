@@ -11,4 +11,4 @@ run-sqs-consumer:
 	go run cmd/sqs_consumer/sqs_consumer.go
 
 build-sqs-consumer:
-	go build -o ./build/sqs_consumer ./cmd/sqs_consumer/sqs_consumer.go
+	go build -o ./build/main ./cmd/sqs_consumer/sqs_consumer.go

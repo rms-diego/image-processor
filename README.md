@@ -18,11 +18,17 @@ Verify api documentation in `/docs`
 
 [![My Skills](https://skillicons.dev/icons?i=go,postgres,docker,aws)](https://skillicons.dev)
 
-## Getting Started
+## Running local
 
 1. **Install Dependencies**: `go mod tidy`
+2. **Environment variables**: Copy `.env.example` to a new `.env`
+3. **Run Api**: `make run-api`
+4. **Run SQS consumers**: `make run-sqs-consumer`
+
+## Running with docker
+
+1. **Environment variables**: Copy `.env.example` to a new `.env`
 2. **Create containers**: `docker-compose up -d`
-3. **Environment variables**: Copy `.env.example` to a new `.env`
 
 ## Contribute
 
@@ -40,7 +46,7 @@ This software is available under the following licenses:
 build image
 
 ```shell
-docker build -t image-processor-golang .
+docker build --build-arg APP=api -t image-processor-golang .
 ```
 
 run container

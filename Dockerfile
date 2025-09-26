@@ -1,4 +1,4 @@
-FROM golang:1.24-alpine3.21 AS build
+FROM golang:1.24.4 AS build
 
 WORKDIR /app
 
@@ -8,9 +8,11 @@ RUN go mod download
 
 COPY . .
 
-RUN go build -o build/main ./cmd/main.go
+ARG APP
 
-FROM alpine:3.21
+RUN make build-${APP}
+
+FROM debian:stable-slim
 
 WORKDIR /app
 

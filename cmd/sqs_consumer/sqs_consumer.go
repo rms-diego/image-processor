@@ -17,7 +17,6 @@ import (
 )
 
 func main() {
-
 	if err := config.InitGatewayCfg(); err != nil {
 		panic(err)
 	}
@@ -31,6 +30,9 @@ func main() {
 
 	ir := imagerepository.NewImageRepository(database.DB)
 	is := imageservice.NewService(gateway.S3Gateway, gateway.SqsGateway, ir)
+
+	fmt.Println("Starting SQS consumer")
+	fmt.Printf("\n")
 
 	for {
 		sqsMessages, err := gateway.SqsGateway.GetMessages()
