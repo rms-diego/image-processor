@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"net/http"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/rms-diego/image-processor/internal/database"
@@ -14,14 +15,15 @@ func AuthHandler() gin.HandlerFunc {
 	r := authRepository.NewRepository(database.DB)
 
 	return func(c *gin.Context) {
-		token := c.GetHeader("Authorization")
+		bearerToken := c.GetHeader("Authorization")
 
-		if token == "" {
+		if bearerToken == "" {
 			c.Error(exception.New("token is required", http.StatusUnauthorized))
 			c.Abort()
 			return
 		}
 
+		token := strings.Split(bearerToken, " ")[1]
 		jwtUtils := jwtutils.NewJwtUtils()
 		tokenDecoded, err := jwtUtils.ValidateAndDecodeToken(token)
 
