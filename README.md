@@ -41,6 +41,7 @@ Verify api documentation in `/docs`
 This software is available under the following licenses:
 
 - [MIT](https://rem.mit-license.org)
+- [Challenger link](https://roadmap.sh/projects/image-processing-service)
 
 <!-- # image-processor
 
