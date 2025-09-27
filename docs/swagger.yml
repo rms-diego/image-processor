@@ -1,0 +1,210 @@
+openapi: 3.0.0
+info:
+  title: Image Processor API
+  version: 1.0.0
+  description: API gerada a partir do arquivo do Insomnia
+servers:
+  - url: http://localhost:8080
+tags:
+  - name: Auth
+    description: Endpoints de autenticação e registro
+  - name: Images
+    description: Endpoints para upload, listagem e transformação de imagens
+
+paths:
+  /auth/register:
+    post:
+      tags:
+        - Auth
+      summary: Register
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+              required:
+                - username
+                - password
+            example:
+              username: john_doe
+              password: password123
+      responses:
+        "200":
+          description: User registered successfully
+  /auth:
+    post:
+      tags:
+        - Auth
+      summary: Login
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+              required:
+                - username
+                - password
+            example:
+              username: john_doe
+              password: password123
+      responses:
+        "200":
+          description: User logged in successfully
+          headers:
+            Authorization:
+              description: Bearer token
+              schema:
+                type: string
+  /images:
+    get:
+      tags:
+        - Images
+      summary: Get images
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: List of images
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  total_images:
+                    type: integer
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          format: uuid
+                        url:
+                          type: string
+                          format: uri
+                        created_at:
+                          type: string
+                          format: date-time
+                      required:
+                        - id
+                        - url
+                        - created_at
+              example:
+                total_images: 6
+                data:
+                  - id: 20309bef-63ff-4350-9576-bbda8544f36e
+                    url: https://bucket-image-processor.s3.us-east-1.amazonaws.com/f616171a-c58a-4502-aa18-5bce536bbd81.wallpaper.jpeg
+                    created_at: "2025-09-17T22:42:04.908634Z"
+    post:
+      tags:
+        - Images
+      summary: Upload image
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+              required:
+                - file
+      responses:
+        "201":
+          description: Image uploaded successfully
+  /images/{id}:
+    get:
+      tags:
+        - Images
+      summary: Get image by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Image data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  url:
+                    type: string
+                    format: uri
+                required:
+                  - url
+              example:
+                url: https://bucket-image-processor.s3.us-east-1.amazonaws.com/f616171a-c58a-4502-aa18-5bce536bbd81.wallpaper.jpeg
+        "404":
+          description: Image not found
+  /images/{id}/transform:
+    post:
+      tags:
+        - Images
+      summary: Transform image
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                format:
+                  type: string
+                  enum:
+                    - jpeg
+                    - jpg
+                    - png
+                    - webp
+                quality:
+                  type: integer
+                  minimum: 1
+                  maximum: 100
+            example:
+              format: png
+              quality: 20
+      responses:
+        "200":
+          description: Image transformed successfully
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+security:
+  - bearerAuth: []
